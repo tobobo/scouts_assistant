@@ -1,0 +1,17 @@
+<p><a href="auth/facebook">Connect to Facebook</a></p>
+<p><a href="auth/linkedin">Connect to Linkedin</a></p>
+
+{{#if user}}
+  {{#with user}}
+    {{#if is_facebook}}
+      <br>Hi <strong>{{name.givenName}}</strong>,</br>
+      <br>Your facebook id is: <strong>{{id}}</strong></br>
+      <br>and facebook access token is: <strong>{{access_token}}</strong></br>
+    {{/if}}
+    {{#if is_linkedin}}
+      <br>Hi <strong>{{name.givenName}}</strong>,</br>
+      <br>Your linkedin token is: <strong>{{token}}</strong></br>
+      <br>and linkedin token secret is: <strong>{{token_secret}}</strong></br>
+    {{/if}}
+  {{/with}}
+{{/if}}

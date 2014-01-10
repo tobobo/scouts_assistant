@@ -1,0 +1,18 @@
+{
+  "name": "scouts_assistant",
+  "description": "For getting tokens and data",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "express": "3.4.4",
+    "express3-handlebars": "*",
+    "coffee-script": "*",
+    "nodemon": "*",
+    "async": "*",
+    "mongodb": "~1.3.19",
+    "mongoose": "~3.6.20",
+    "passport": "latest",
+    "passport-facebook": "latest",
+    "passport-linkedin": "latest"
+  }
+}

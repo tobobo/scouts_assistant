@@ -13,6 +13,7 @@
     "mongoose": "~3.6.20",
     "passport": "latest",
     "passport-facebook": "latest",
-    "passport-linkedin": "latest"
+    "passport-linkedin-oauth2": "latest",
+    "request": "latest"
   }
 }

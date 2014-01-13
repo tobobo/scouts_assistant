@@ -16,7 +16,6 @@ passport.use new LinkedInStrategy((
     clientID: process.env.LINKEDIN_KEY
     clientSecret: process.env.LINKEDIN_SECRET
     callbackURL: "/auth/linkedin/callback"
-    scope: ['r_basicprofile', 'r_emailaddress', 'r_network', 'w_messages']
   ), (accessToken, refreshToken, profile, done) ->
     profile.access_token = accessToken
     profile.is_linkedin = true

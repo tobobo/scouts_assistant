@@ -30,25 +30,45 @@ app.get "/", (req, res) ->
     res.render 'index',
       user: req.session.passport_auth
 
+    first_name = req.session.passport_auth.name.givenName.toLowerCase()
+
+    facebook_fields = 'id,age_range,bio,birthday,education,email,favorite_athletes,favorite_teams,first_name,gender,hometown,inspirational_people,languages,last_name,name,link,location,political,quotes,relationship_status,religion,significant_other,username'
+
     if req.session.passport_auth.is_facebook
       request.get 'https://graph.facebook.com/me/friends', (
         qs: 
           access_token: req.session.passport_auth.access_token
-          fields: 'id,age_range,bio,birthday,education,email,favorite_athletes,favorite_teams,first_name,gender,hometown,inspirational_people,languages,last_name,name,link,location,political,quotes,relationship_status,religion,significant_other,username'
+          fields: facebook_fields
       ), (error, response, body) ->
         parsed_body = JSON.parse(body)
         num_friends = parsed_body.data.length
-        fs.writeFile 'tmp/facebook_connections', body
+        fs.writeFile "tmp/#{first_name}_facebook_connections.txt", body
 
+      request.get 'https://graph.facebook.com/me', (
+        qs: 
+          access_token: req.session.passport_auth.access_token
+          fields: facebook_fields
+      ), (error, response, body) ->
+        fs.writeFile "tmp/#{first_name}_facebook_profile.txt", body
+
+    linkedin_fields = 'id,formatted-name,headline,location,industry,email-address,interests,skills,three-current-positions,three-past-positions'
     if req.session.passport_auth.is_linkedin
-      request.get 'https://api.linkedin.com/v1/people/~/connections', (
+      request.get "https://api.linkedin.com/v1/people/~/connections:(#{linkedin_fields})", (
         qs:
           oauth2_access_token: req.session.passport_auth.access_token
           format: 'json'
       ), (error, response, body) ->
         parsed_body = JSON.parse(body)
         num_friends = parsed_body.values.length
-        fs.writeFile 'tmp/linkedin_connections', body
+        fs.writeFile "tmp/#{first_name}_linkedin_connections.txt", body
+
+      request.get "https://api.linkedin.com/v1/people/~:(#{linkedin_fields})", (
+        qs:
+          oauth2_access_token: req.session.passport_auth.access_token
+          format: 'json'
+      ), (error, response, body) ->
+        fs.writeFile "tmp/#{first_name}_linkedin_profile.txt", body
+        
 
   res.render 'index'
 
@@ -64,7 +84,10 @@ app.get "/auth/facebook/callback", (req, res) ->
     res.redirect('/')
   )(req, res)
 
-app.get "/auth/linkedin", passport.authenticate('linkedin', {state: 'SOME STATE'})
+app.get "/auth/linkedin", passport.authenticate('linkedin', 
+  state: 'SOME STATE'
+  scope: ['r_fullprofile', 'r_emailaddress', 'r_network']
+)
 
 app.get "/auth/linkedin/callback", (req, res) ->
   passport.authenticate('linkedin', (error, user, info) ->
